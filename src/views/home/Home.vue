@@ -89,6 +89,16 @@
       this.getHomeGoods('pop', 1);
       this.getHomeGoods('new', 1);
       this.getHomeGoods('sell', 1);
+
+      //$bus.$on监听事件总线发射的事件
+      this.$bus.$on('itemImageLoad',()=>{
+        /**
+         * 监听从GoosListItem组件中的事件总线发射的事件,图片加载完成
+         */
+        this.$refs.scroll.refresh();
+
+      });
+
     },
 
     methods: {

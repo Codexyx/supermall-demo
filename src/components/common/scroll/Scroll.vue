@@ -15,7 +15,7 @@
 
   export default {
     name: "Scroll",
-    props:{
+    props: {
       probeType: {
         type: Number,
         default: 1
@@ -53,11 +53,17 @@
         this.$emit('scroll', position);
       });
 
+      //解决滚动卡顿，让BSscroll重新计算item总高度
+      this.scroll.refresh();
+
+
       //监听上拉事件
       // this.scroll.on('pullingUp', ()=>{
       //   //console.log('上拉加载更多');
       //   this.$emit('pullingUp');
       // });
+
+
     },
     methods: {
       //回到顶部
@@ -66,8 +72,12 @@
       },
 
       //上拉触底后重置上拉事件
-      finishPullUp(){
+      finishPullUp() {
         this.scroll.finishPullUp();
+      },
+      //滚动区域内图片加载完成后重新计算整个可滚动区域的高度
+      refresh(){
+        this.scroll.refresh();
       }
     }
   }

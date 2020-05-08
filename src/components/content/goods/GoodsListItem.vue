@@ -1,6 +1,9 @@
 <template>
   <div class="goods-item">
-    <img :src="goodsItem.show.img" alt="">
+    <!--@load="imageLoad" 这个函数用于监听图片加载完成
+        @load是vue中自带的一个属性
+    -->
+    <img :src="goodsItem.show.img" alt="" @load="imageLoad">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">{{goodsItem.price}}</span>
@@ -18,6 +21,18 @@
         default() {
           return {}
         }
+      }
+    },
+    methods: {
+      //监听图片加载完成
+      imageLoad() {
+        /**
+         * 使用事件总线发射一个事件，
+         * 用于监听图片加载完成让scroll重新计算可滚动区域高度
+         * 解决滚动卡顿bug
+         * this.$bus.$emit('itemImageLoad'); 发射事件
+         */
+        this.$bus.$emit('itemImageLoad');
       }
     }
   }
@@ -50,7 +65,7 @@
     white-space: nowrap;
     width: 100%;
     overflow: hidden;
-    text-overflow:ellipsis;
+    text-overflow: ellipsis;
     margin-bottom: 3px;
   }
 
