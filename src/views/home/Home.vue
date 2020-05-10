@@ -35,6 +35,7 @@
     getHomeMultidata,
     getHomeGoods
   } from "../../network/home";
+  import {debouncs} from "../../common/utils";
 
   import NavBar from "../../components/common/navbar/NavBar";
   import HomeSwiper from "./childComps/HomeSwiper";
@@ -96,9 +97,8 @@
     //生命周期函数，页面组件全部加载完成
     mounted() {
 
-       //对于refresh非常频繁调用的问题，进行防抖函数处理 debouncs(被处理函数, 延迟时间[单位毫秒]);
-      const refresh = this.debouncs(this.$refs.scroll.refresh, 500);
-
+      //对于refresh非常频繁调用的问题，进行防抖函数处理 debouncs(被处理函数, 延迟时间[单位毫秒])
+      const refresh = debouncs(this.$refs.scroll.refresh, 500);
       //$bus.$on监听事件总线发射的事件
       this.$bus.$on('itemImageLoad', () => {
         refresh();
@@ -189,7 +189,6 @@
         });
       },
 
-
       getHomeGoods(type) {
         //从data的goods对象中动态获取page的值
         const page = this.goods[type].page + 1;
@@ -204,18 +203,9 @@
           //刷新上拉加载事件，否则上拉加载只会执行一 peizh
           //this.$refs.scroll.finishPullUp();
         })
-      },
-
-      //防抖函数，用于解决调用scroll组件的refresh重新计算滚动区域过于频繁的问题
-      debouncs(func, delay) {
-        let timer = null;
-        return function (...args) {
-          if (timer) clearTimeout(timer)
-          timer = setTimeout(() => {
-            func.apply(this, args);
-          }, delay);
-        }
       }
+
+
 
     }
   }
