@@ -91,8 +91,17 @@
       this.getHomeGoods('new', 1);
       this.getHomeGoods('sell', 1);
 
+    },
+
+    //生命周期函数，页面组件全部加载完成
+    mounted() {
+
+       //对于refresh非常频繁调用的问题，进行防抖函数处理 debouncs(被处理函数, 延迟时间[单位毫秒]);
+      const refresh = this.debouncs(this.$refs.scroll.refresh, 500);
+
       //$bus.$on监听事件总线发射的事件
-      this.$bus.$on('itemImageLoad',()=>{
+      this.$bus.$on('itemImageLoad', () => {
+        refresh();
         /**
          * 监听从GoosListItem组件中的事件总线发射的事件,图片加载完成
          * batter-scroll 在决定有多少区域可滚动时，是根据scrollerHeight属性决定，
@@ -112,10 +121,7 @@
          *          3. GoodsListItem组件通过$bus.$emit('事件名',参数[可选])发射一个事件
          *          4. Home.vue 通过$bus.$on('事件名', 回调函数(参数)) 接受一个事件并调用回调函数
          */
-        this.$refs.scroll.refresh();
-
       });
-
     },
 
     methods: {
@@ -125,7 +131,7 @@
       contentScroll(position) {
         //根据当前滚动的y轴坐标决定 backTop 组件是否显示
         //position.y < -1000 ? this.backTopIsShow = true : this.backTopIsShow = false
-        this.backTopIsShow = position.y < -1000
+        this.backTopIsShow = position.y < -1000;
       },
 
       //上拉加载更多
@@ -198,8 +204,18 @@
           //刷新上拉加载事件，否则上拉加载只会执行一 peizh
           //this.$refs.scroll.finishPullUp();
         })
-      }
+      },
 
+      //防抖函数，用于解决调用scroll组件的refresh重新计算滚动区域过于频繁的问题
+      debouncs(func, delay) {
+        let timer = null;
+        return function (...args) {
+          if (timer) clearTimeout(timer)
+          timer = setTimeout(() => {
+            func.apply(this, args);
+          }, delay);
+        }
+      }
 
     }
   }

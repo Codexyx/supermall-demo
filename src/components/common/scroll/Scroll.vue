@@ -66,18 +66,19 @@
 
     },
     methods: {
-      //回到顶部
+      // 回到顶部
       scrollTo(x, y, time = 1000) {
-        this.scroll.scrollTo(x, y, time)
+        this.scroll && this.scroll.scrollTo(x, y, time);
       },
 
-      //上拉触底后重置上拉事件
+      // 上拉触底后重置上拉事件
       finishPullUp() {
-        this.scroll.finishPullUp();
+        this.scroll && this.scroll.finishPullUp();
       },
-      //滚动区域内图片加载完成后重新计算整个可滚动区域的高度
+      // 滚动区域内图片加载完成后重新计算整个可滚动区域的高度
       refresh(){
-        this.scroll.refresh();
+        // 逻辑与，解决refresh函数找不到的bug，如果scroll组件没有加载完成，则不调用refresh函数
+        this.scroll && this.scroll.refresh();
       }
     }
   }
