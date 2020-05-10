@@ -5,7 +5,11 @@
       <div slot="center">{{navTitle}}</div>
     </nav-bar>
     <!--scroll: BScroll滚动优化区域
-      @pullingUp='loadMore'
+        :probe-type="3" scroll监听滚动类型
+        :click="true" 是否阻止父元素原生点击事件
+        :pull-up-load="true" 是否监听上拉触底事件
+        @scroll="contentScroll" 让scroll组件监听滚动位置传会Home组件，用于判断BackTop显示隐藏
+        @pullingUp='loadMore' scroll组件监听上拉加载，传回Home调用加载函数后刷新scroll组件
     -->
     <scroll class="content"
             ref="scroll"
@@ -13,6 +17,7 @@
             :click="true"
             :pull-up-load="true"
             @scroll="contentScroll"
+            @pullingUp='loadMore'
     >
       <!--轮播图-->
       <home-swiper :banners="banners"></home-swiper>
@@ -135,16 +140,14 @@
       },
 
       //上拉加载更多
-      // loadMore() {
-      //   /**
-      //    * 调用之前的网络请求函数，加载下一页数据，
-      //    * 这个函数内部会把页码自增，
-      //    * 所以拿到的一定是下一页数据
-      //    * */
-      //   this.getHomeGoods(this.currentType);
-      //   // TODO 上拉加载更多
-      //
-      // },
+      loadMore() {
+        /**
+         * 根据当前显示的商品类型加载更多
+         */
+        this.getHomeGoods(this.currentType);
+        // TODO 上拉加载更多
+
+      },
 
 
       /**
@@ -200,8 +203,8 @@
           this.goods[type].list.push(...res.data.list);
           //然后商品数据对象页码自增，下次请求下页数据直接使用这个页码
           this.goods[type].page += 1;
-          //刷新上拉加载事件，否则上拉加载只会执行一 peizh
-          //this.$refs.scroll.finishPullUp();
+          //刷新上拉加载事件，否则上拉加载只会执行一次
+          this.$refs.scroll.finishPullUp();
         })
       }
 

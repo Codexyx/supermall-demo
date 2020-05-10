@@ -20,10 +20,10 @@
         type: Number,
         default: 1
       },
-      // pullUpLoad: {
-      //   type: Boolean,
-      //   default: false
-      // },
+      pullUpLoad: {
+        type: Boolean,
+        default: false
+      },
       click: {
         type: Boolean,
         default: false
@@ -53,16 +53,18 @@
         this.$emit('scroll', position);
       });
 
+
+      //监听上拉事件,scroll滚动到底部
+      if(this.pullUpLoad){
+        this.scroll.on('pullingUp', ()=>{
+          this.$emit('pullingUp');
+          //重置上拉事件
+          //this.finishPullUp();
+        })
+      }
+
       //解决滚动卡顿，让BSscroll重新计算item总高度
       this.scroll.refresh();
-
-
-      //监听上拉事件
-      // this.scroll.on('pullingUp', ()=>{
-      //   //console.log('上拉加载更多');
-      //   this.$emit('pullingUp');
-      // });
-
 
     },
     methods: {
