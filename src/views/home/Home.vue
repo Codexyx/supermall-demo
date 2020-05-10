@@ -85,6 +85,7 @@
     created() {
       //1. 请求多个数据
       this.getHomeMultidata(); //这里调用的是methods中的函数
+
       //请求商品数据
       this.getHomeGoods('pop', 1);
       this.getHomeGoods('new', 1);
@@ -94,6 +95,22 @@
       this.$bus.$on('itemImageLoad',()=>{
         /**
          * 监听从GoosListItem组件中的事件总线发射的事件,图片加载完成
+         * batter-scroll 在决定有多少区域可滚动时，是根据scrollerHeight属性决定，
+         * scrollerHeight属性是根据batter-scroll的content中子组件高度计算的，
+         * 在首页中，刚开始计算scrollerHeight属性时，图片没有加载完成，所以计算出来的高度是错误的，
+         * 就会出现滚动卡顿bug。
+         * 监听每张图片加载是否完成，只要有一张加载完成，都让scroll组件重新计算scrollerHeight高度。
+         * 原生js事件：
+         *    img.onload = function(){}
+         * vue监听： @load='函数'
+         * 如何将GoodsListItem组件中的事件传入到Home.vue   (非父子组件通信)
+         *    1.vuex，监听全局属性
+         *    2.事件总线
+         *       -- 实现步骤：
+         *          1. main.js:  Vue.prototype.$bus = new Vue(); 创建一个事件总线赋值Vue
+         *          2. GoodsListItem组件img标签 @load='函数'
+         *          3. GoodsListItem组件通过$bus.$emit('事件名',参数[可选])发射一个事件
+         *          4. Home.vue 通过$bus.$on('事件名', 回调函数(参数)) 接受一个事件并调用回调函数
          */
         this.$refs.scroll.refresh();
 
