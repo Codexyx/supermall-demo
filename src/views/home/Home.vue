@@ -4,7 +4,10 @@
     <nav-bar class="home-nav">
       <div slot="center">{{navTitle}}</div>
     </nav-bar>
-    <!--首页分类导航控制,用于做吸顶效果-->
+    <!--首页分类导航控制,用于做吸顶效果
+        默认不显示，当scroll组件中的tobcontrol被滚动到一定位置时，这个组件才会显示出来，
+        scroll中的tobcontrol被隐藏
+    -->
     <tab-control
       :titles="['流行','新款','精选']"
       @tabClick="tabClick"
@@ -155,9 +158,9 @@
          * 因为 tabOffsetTop 取值是一个正数，position.y是一个负数,就让position的y轴数字取正数
          */
 
-        if(-position.y >= this.tabOffsetTop){
+        if (-position.y >= this.tabOffsetTop) {
           this.isFixed = true;
-        }else{
+        } else {
           this.isFixed = false;
         }
 
@@ -243,7 +246,7 @@
          *    获取tabControl的offsetTop，
          *    所有组件都有一个属性 $el: 用于获取组件中的元素,
          *    在获取元素的 offsetTop属性,如果在mounted中获取这个值，获取到的值不一定是正确的，
-         *    因为组件挂在完毕，图片不一定加载完毕
+         *    因为组件挂载完毕，图片不一定加载完毕
          */
         this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
         /**
@@ -277,16 +280,9 @@
     right: 0;
   }
 
-  .tab-control{
+  .tab-control {
     position: relative;
     z-index: 9;
   }
 
-
-
-  /*.content {*/
-  /*height: calc(100% - 93px);*/
-  /*overflow: hidden;*/
-  /*margin-top: 44px;*/
-  /*}*/
 </style>
