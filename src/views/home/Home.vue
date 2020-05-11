@@ -4,6 +4,14 @@
     <nav-bar class="home-nav">
       <div slot="center">{{navTitle}}</div>
     </nav-bar>
+    <!--首页分类导航控制,用于做吸顶效果-->
+    <tab-control
+      :titles="['流行','新款','精选']"
+      @tabClick="tabClick"
+      ref="tabControl1"
+      class="tab-control"
+      v-show="isFixed"
+    ></tab-control>
     <!--scroll: BScroll滚动优化区域
         :probe-type="3" scroll监听滚动类型
         :click="true" 是否阻止父元素原生点击事件
@@ -20,13 +28,19 @@
             @pullingUp='loadMore'
     >
       <!--轮播图-->
-      <home-swiper :banners="banners"></home-swiper>
+      <home-swiper :banners="banners" @swiperImageLoad="swiperImageLoad"></home-swiper>
       <!--推荐-->
       <recommend-view :recommends="recommends"></recommend-view>
       <!--本周流行-->
       <feature-view></feature-view>
       <!--首页分类导航控制-->
-      <tab-control class="tab-control" :titles="['流行','新款','精选']" @tabClick="tabClick"></tab-control>
+      <tab-control
+        :titles="['流行','新款','精选']"
+        @tabClick="tabClick"
+        ref="tabControl2"
+        v-show="!isFixed"
+
+      ></tab-control>
       <!--首页商品列表-->
       <goods-list :goods="showGoods"></goods-list>
     </scroll>
@@ -80,10 +94,10 @@
           new: {page: 0, list: []}, //新款
           sell: {page: 0, list: []}, //精选
         },
-        //给tabControl传递的值，用于点击tabControl-item改变首页商品的显示
-        currentType: 'pop',
-        //控制back-top组件的显示隐藏
-        backTopIsShow: false
+        currentType: 'pop',   //给tabControl传递的值，用于点击tabControl-item改变首页商品的显示
+        backTopIsShow: false, //控制back-top组件的显示隐藏
+        tabOffsetTop: 0,      // tabControll滚动到的位置
+        isFixed: false    //tabControl显示隐藏，做吸顶
       }
     },
 
@@ -96,7 +110,6 @@
       this.getHomeGoods('pop', 1);
       this.getHomeGoods('new', 1);
       this.getHomeGoods('sell', 1);
-
     },
 
     //生命周期函数，页面组件全部加载完成
@@ -137,6 +150,17 @@
         //根据当前滚动的y轴坐标决定 backTop 组件是否显示
         //position.y < -1000 ? this.backTopIsShow = true : this.backTopIsShow = false
         this.backTopIsShow = position.y < -1000;
+        /**
+         * tabControl吸顶效果2. 决定tabControl是否吸顶,
+         * 因为 tabOffsetTop 取值是一个正数，position.y是一个负数,就让position的y轴数字取正数
+         */
+
+        if(-position.y >= this.tabOffsetTop){
+          this.isFixed = true;
+        }else{
+          this.isFixed = false;
+        }
+
       },
 
       //上拉加载更多
@@ -145,8 +169,6 @@
          * 根据当前显示的商品类型加载更多
          */
         this.getHomeGoods(this.currentType);
-        // TODO 上拉加载更多
-
       },
 
 
@@ -168,6 +190,12 @@
           default:
             this.currentType = 'pop';
         }
+        /**
+         * tabControl吸顶效果3
+         * 同步两个tabcontrol的被点击元素状态
+         */
+        this.$refs.tabControl1.currentIndex = index;
+        this.$refs.tabControl2.currentIndex = index;
       },
 
 
@@ -206,9 +234,23 @@
           //刷新上拉加载事件，否则上拉加载只会执行一次
           this.$refs.scroll.finishPullUp();
         })
+      },
+
+      swiperImageLoad() {
+        /**
+         * tabControl吸顶效果1.
+         *    获取滚动到多少，开始有吸顶效果, 在swiper组件中图片加载完成后执行
+         *    获取tabControl的offsetTop，
+         *    所有组件都有一个属性 $el: 用于获取组件中的元素,
+         *    在获取元素的 offsetTop属性,如果在mounted中获取这个值，获取到的值不一定是正确的，
+         *    因为组件挂在完毕，图片不一定加载完毕
+         */
+        this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
+        /**
+         * 2.监听滚动，动态改变tabControl样式
+         */
+
       }
-
-
 
     }
   }
@@ -224,17 +266,6 @@
   .home-nav {
     background-color: var(--color-tint);
     color: #fff;
-    position: fixed;
-    left: 0;
-    right: 0;
-    top: 0;
-    z-index: 9;
-  }
-
-  .tab-control {
-    position: sticky;
-    top: 44px;
-    z-index: 9;
   }
 
   .content {
@@ -245,6 +276,13 @@
     left: 0;
     right: 0;
   }
+
+  .tab-control{
+    position: relative;
+    z-index: 9;
+  }
+
+
 
   /*.content {*/
   /*height: calc(100% - 93px);*/
