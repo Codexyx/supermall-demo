@@ -1,6 +1,13 @@
 <template>
   <div id="app">
-    <router-view></router-view>
+    <!--
+      keep-alive包裹，让路由离开页面再回到页面时，这个页面不会被销毁，也不会被重新创建，
+      记录离开页面时的位置
+    -->
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
+
     <main-tab-bar></main-tab-bar>
   </div>
 </template>

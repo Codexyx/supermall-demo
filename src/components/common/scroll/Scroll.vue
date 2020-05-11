@@ -81,6 +81,10 @@
       refresh(){
         // 逻辑与，解决refresh函数找不到的bug，如果scroll组件没有加载完成，则不调用refresh函数
         this.scroll && this.scroll.refresh();
+      },
+      //返回当前滚动的Y轴
+      getScrollY(){
+        return this.scroll ? this.scroll.y : 0;
       }
     }
   }

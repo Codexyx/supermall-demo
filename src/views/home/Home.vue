@@ -100,10 +100,27 @@
         currentType: 'pop',   //给tabControl传递的值，用于点击tabControl-item改变首页商品的显示
         backTopIsShow: false, //控制back-top组件的显示隐藏
         tabOffsetTop: 0,      // tabControll滚动到的位置
-        isFixed: false    //tabControl显示隐藏，做吸顶
+        isFixed: false,    //tabControl显示隐藏，做吸顶
+        saveY: 0
       }
     },
-
+    //页面销毁时
+    destroyed() {
+      console.log('home destroyed');
+    },
+    //活跃时
+    activated() {
+      //当进入页面时，设置页面停留位置的滚动Y轴，第三个0表示时间，立即到saveY的位置无延迟动画
+      this.$refs.scroll.scrollTo(0, this.saveY, 0);
+      //滚动完成后对scroll组件刷新，重新计算组件内的数据
+      this.$refs.scroll.refresh();
+    },
+    //不活跃时
+    deactivated() {
+      console.log(this.saveY);
+      //离开页面时，记录离开时的页面滚动Y轴
+      this.saveY = this.$refs.scroll.getScrollY();
+    },
     //生命周期函数，页面加载执行
     created() {
       //1. 请求多个数据
