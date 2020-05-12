@@ -93,8 +93,8 @@
         banners: [],  //轮播图列表
         recommends: [],  //推荐栏列表数据
         goods: {    //首页商品数据
-          pop: {page: 0, list: []}, //流行
-          new: {page: 0, list: []}, //新款
+          pop:  {page: 0, list: []}, //流行
+          new:  {page: 0, list: []}, //新款
           sell: {page: 0, list: []}, //精选
         },
         currentType: 'pop',   //给tabControl传递的值，用于点击tabControl-item改变首页商品的显示
