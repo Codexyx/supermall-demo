@@ -1,5 +1,5 @@
 <template>
-  <div class="goods-item">
+  <div class="goods-item" @click="itemClick">
     <!--@load="imageLoad" 这个函数用于监听图片加载完成
         @load是vue中自带的一个属性
     -->
@@ -33,6 +33,11 @@
          * this.$bus.$emit('itemImageLoad'); 发射事件
          */
         this.$bus.$emit('itemImageLoad');
+      },
+
+      //点击商品携带参数跳转详情页
+      itemClick(){
+        this.$router.push('/detail/' + this.goodsItem.iid)
       }
     }
   }

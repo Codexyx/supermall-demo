@@ -104,23 +104,26 @@
         saveY: 0
       }
     },
-    //页面销毁时
+
+    //生命周期函数，页面销毁时
     destroyed() {
       console.log('home destroyed');
     },
-    //活跃时
+
+    //生命周期函数，页面活跃时
     activated() {
       //当进入页面时，设置页面停留位置的滚动Y轴，第三个0表示时间，立即到saveY的位置无延迟动画
       this.$refs.scroll.scrollTo(0, this.saveY, 0);
       //滚动完成后对scroll组件刷新，重新计算组件内的数据
       this.$refs.scroll.refresh();
     },
-    //不活跃时
+
+    //生命周期函数，页面不活跃时
     deactivated() {
-      console.log(this.saveY);
       //离开页面时，记录离开时的页面滚动Y轴
       this.saveY = this.$refs.scroll.getScrollY();
     },
+
     //生命周期函数，页面加载执行
     created() {
       //1. 请求多个数据
@@ -134,7 +137,6 @@
 
     //生命周期函数，页面组件全部加载完成
     mounted() {
-
       //对于refresh非常频繁调用的问题，进行防抖函数处理 debouncs(被处理函数, 延迟时间[单位毫秒])
       const refresh = debouncs(this.$refs.scroll.refresh, 500);
       //$bus.$on监听事件总线发射的事件
@@ -174,13 +176,7 @@
          * tabControl吸顶效果2. 决定tabControl是否吸顶,
          * 因为 tabOffsetTop 取值是一个正数，position.y是一个负数,就让position的y轴数字取正数
          */
-
-        if (-position.y >= this.tabOffsetTop) {
-          this.isFixed = true;
-        } else {
-          this.isFixed = false;
-        }
-
+        -position.y >= this.tabOffsetTop ? this.isFixed = true : this.isFixed = false;
       },
 
       //上拉加载更多
